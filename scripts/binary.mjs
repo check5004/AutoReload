@@ -1,0 +1,10 @@
+import {deflateSync} from 'node:zlib';
+export function crc32(data){let crc=0xffffffff;for(const byte of data){crc^=byte;for(let bit=0;bit<8;bit++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return (crc^0xffffffff)>>>0;}
+const u32=n=>{const b=Buffer.alloc(4);b.writeUInt32BE(n>>>0);return b;};
+function chunk(name,data){const type=Buffer.from(name);return Buffer.concat([u32(data.length),type,data,u32(crc32(Buffer.concat([type,data])))]);}
+export function png(width,height,pixel){const raw=Buffer.alloc(height*(1+width*4));for(let y=0;y<height;y++){raw[y*(width*4+1)]=0;for(let x=0;x<width;x++){const p=pixel(x,y);for(let c=0;c<4;c++)raw[y*(width*4+1)+1+x*4+c]=p[c];}}const ihdr=Buffer.alloc(13);ihdr.writeUInt32BE(width,0);ihdr.writeUInt32BE(height,4);ihdr[8]=8;ihdr[9]=6;return Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]),chunk('IHDR',ihdr),chunk('IDAT',deflateSync(raw)),chunk('IEND',Buffer.alloc(0))]);}
+export function zip(entries){
+  const files=[],central=[];let offset=0;
+  for(const [name,value] of entries){const filename=Buffer.from(name),data=Buffer.from(value),crc=crc32(data);const local=Buffer.alloc(30);local.writeUInt32LE(0x04034b50);local.writeUInt16LE(20,4);local.writeUInt16LE(0x800,6);local.writeUInt16LE(0x21,12);local.writeUInt32LE(crc,14);local.writeUInt32LE(data.length,18);local.writeUInt32LE(data.length,22);local.writeUInt16LE(filename.length,26);files.push(local,filename,data);const header=Buffer.alloc(46);header.writeUInt32LE(0x02014b50);header.writeUInt16LE(20,4);header.writeUInt16LE(20,6);header.writeUInt16LE(0x800,8);header.writeUInt16LE(0x21,14);header.writeUInt32LE(crc,16);header.writeUInt32LE(data.length,20);header.writeUInt32LE(data.length,24);header.writeUInt16LE(filename.length,28);header.writeUInt32LE(offset,42);central.push(header,filename);offset+=local.length+filename.length+data.length;}
+  const directory=Buffer.concat(central),end=Buffer.alloc(22);end.writeUInt32LE(0x06054b50);end.writeUInt16LE(entries.length,8);end.writeUInt16LE(entries.length,10);end.writeUInt32LE(directory.length,12);end.writeUInt32LE(offset,16);return Buffer.concat([...files,directory,end]);
+}

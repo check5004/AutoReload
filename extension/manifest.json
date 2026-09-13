@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "AutoReload — チケット購入サポート",
+  "short_name": "AutoReload",
+  "version": "0.1.0",
+  "description": "ドメインごとの復旧監視と、クリックで記録する日時・席種の選択、入力補助。購入確定は手動です。",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://api.github.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "AutoReload",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "128": "icons/128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "options_page": "options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3uLJNPEsti1GQqDU58p+FGLPSreE8yzd//BvbOjfAgpuQuWI6Y1cwuNXZy2ieGsMg/xLXfQpZRQhoo9SsjqKoxWe+72/M/ee47cgeTREPA3i/XrpQF85AEOWUXgSuNMMrgibYWVvq3/pdT4URQ1ExkUlAAIZHHFqAuXW0cZZsq4iEqM2z4//EYQenCEvD28RrFc0up+4tQMGi/ITsln2Zfv4qf5wPzGhwyacZyooyGc0APhWm0oeg0IvnxaweAZay/KUd/9JuWuvTvzGcD2Fdg/wzcPSL9FPIyssMWquUl+L91sRSg5rG538aRqCSLLcBC9Kb6yZle+OsFF2ZjUBUQIDAQAB"
+}
