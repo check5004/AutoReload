@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="506" viewBox="0 0 1200 506" role="img" aria-labelledby="title desc">
+<title id="title">混雑している間の、読み直しをお手伝い。</title>
+<desc id="desc">利用者が復旧監視を開始し、間隔をあけてページを読み直す。販売画面への復旧を検知すると停止。</desc>
+<g font-family="'Yu Gothic','Meiryo','Noto Sans CJK JP',sans-serif">
+<rect x="0" y="0" width="1200" height="506" rx="24" fill="#f4f7fc" stroke="none" stroke-width="2"/>
+<text x="36" y="57" font-size="34" fill="#18304d" font-weight="700" text-anchor="start">混雑している間の、読み直しをお手伝い。</text>
+<text x="36" y="94" font-size="23" fill="#526781" font-weight="400" text-anchor="start">「復旧監視を開始」を使うときの流れ</text>
+<rect x="36" y="119" width="344" height="301" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="70" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="70" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">1</text>
+<text x="102" y="161" font-size="24" fill="#18304d" font-weight="700" text-anchor="start">混雑画面で開始</text>
+<rect x="58" y="187" width="300" height="169" rx="14" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<rect x="59" y="188" width="298" height="32" rx="12" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<rect x="59" y="205" width="298" height="15" rx="0" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<circle cx="73" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="88" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="103" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<rect x="428" y="119" width="344" height="301" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="462" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="462" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">2</text>
+<text x="494" y="161" font-size="24" fill="#18304d" font-weight="700" text-anchor="start">間隔をあけて確認</text>
+<rect x="450" y="187" width="300" height="169" rx="14" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<rect x="451" y="188" width="298" height="32" rx="12" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<rect x="451" y="205" width="298" height="15" rx="0" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<circle cx="465" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="480" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="495" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<rect x="820" y="119" width="344" height="301" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="854" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="854" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">3</text>
+<text x="886" y="161" font-size="24" fill="#18304d" font-weight="700" text-anchor="start">販売画面で停止</text>
+<rect x="842" y="187" width="300" height="169" rx="14" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<rect x="843" y="188" width="298" height="32" rx="12" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<rect x="843" y="205" width="298" height="15" rx="0" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<circle cx="857" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="872" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="887" cy="203" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<text x="208" y="271" font-size="21" fill="#526781" font-weight="500" text-anchor="middle">ただいま混雑しています</text>
+<rect x="79" y="299" width="258" height="39" rx="8" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="208" y="326" font-size="22" fill="#fff" font-weight="700" text-anchor="middle">復旧監視を開始</text>
+<text x="208" y="395" font-size="23" fill="#526781" font-weight="400" text-anchor="middle">自分で開始ボタンを押す</text>
+<path d="M 619.6 251.4 A 28 28 0 1 0 628 273" stroke="#2455ed" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M 619.6 238.8 V 255.6 H 602.8" stroke="#2455ed" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<text x="600" y="395" font-size="23" fill="#526781" font-weight="400" text-anchor="middle">何度かページを読み直す</text>
+<circle cx="897" cy="262" r="28" fill="#e6f5ef" stroke="none" stroke-width="2"/>
+<path d="M 885 262 l 8 8 l 17 -19" stroke="#177564" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<text x="942" y="271" font-size="24" fill="#18304d" font-weight="700" text-anchor="start">公演を選ぶ</text>
+<rect x="868" y="306" width="248" height="28" rx="6" fill="#e6f5ef" stroke="none" stroke-width="2"/>
+<text x="992" y="395" font-size="25" fill="#177564" font-weight="700" text-anchor="middle">復旧しました</text>
+<path d="M 396 266 L 408 277 L 396 288" stroke="#879dbc" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M 788 266 L 800 277 L 788 288" stroke="#879dbc" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<rect x="36" y="442" width="1128" height="44" rx="10" fill="#edf2ff" stroke="none" stroke-width="2"/>
+<text x="600" y="472" font-size="24" fill="#2455ed" font-weight="500" text-anchor="middle">ONは準備。「復旧監視を開始」を押すと始まります。</text>
+</g>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="510" viewBox="0 0 1200 510" role="img" aria-labelledby="title desc">
+<title id="title">Chromeに入れるまでの、3つの段階。</title>
+<desc id="desc">ZIPを保存、展開してAutoReloadフォルダーを保管、Chromeの管理画面でそのフォルダーを登録する。</desc>
+<g font-family="'Yu Gothic','Meiryo','Noto Sans CJK JP',sans-serif">
+<rect x="0" y="0" width="1200" height="510" rx="24" fill="#f4f7fc" stroke="none" stroke-width="2"/>
+<text x="36" y="57" font-size="34" fill="#18304d" font-weight="700" text-anchor="start">Chromeに入れるまでの、3つの段階。</text>
+<text x="36" y="94" font-size="23" fill="#526781" font-weight="400" text-anchor="start">ZIPを開くだけでは、まだChromeには入りません。</text>
+<rect x="36" y="119" width="344" height="314" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="70" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="70" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">1</text>
+<text x="102" y="161" font-size="24" fill="#18304d" font-weight="700" text-anchor="start">ZIPをダウンロード</text>
+<rect x="428" y="119" width="344" height="314" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="462" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="462" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">2</text>
+<text x="494" y="161" font-size="24" fill="#18304d" font-weight="700" text-anchor="start">展開して保存</text>
+<rect x="820" y="119" width="344" height="314" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="854" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="854" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">3</text>
+<text x="886" y="161" font-size="24" fill="#18304d" font-weight="700" text-anchor="start">Chromeに読み込む</text>
+<path d="M 144 199 H 228 L 269 240 V 345 H 144 Z" stroke="#2455ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="#edf2ff"/>
+<path d="M 228 199 V 240 H 269" stroke="#2455ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<rect x="172" y="252" width="68" height="41" rx="6" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="206" y="281" font-size="25" fill="#fff" font-weight="700" text-anchor="middle">ZIP</text>
+<text x="208" y="397" font-size="23" fill="#18304d" font-weight="500" text-anchor="middle">AutoReload-v数字.zip</text>
+<path d="M 510 249 V 232 Q 510 223 519 223 H 574 L 592 243 H 680 Q 690 243 690 254 V 341 H 510 Z" stroke="#2455ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="#dce7ff"/>
+<path d="M 510 267 H 690" stroke="#2455ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<rect x="540" y="275" width="185" height="81" rx="10" fill="#fff" stroke="#2455ed" stroke-width="2"/>
+<text x="632" y="323" font-size="23" fill="#18304d" font-weight="500" text-anchor="middle">manifest.json</text>
+<text x="600" y="397" font-size="23" fill="#18304d" font-weight="500" text-anchor="middle">AutoReloadフォルダー</text>
+<rect x="842" y="205" width="300" height="151" rx="14" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<rect x="843" y="206" width="298" height="32" rx="12" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<rect x="843" y="223" width="298" height="15" rx="0" fill="#eaf0f9" stroke="none" stroke-width="2"/>
+<circle cx="857" cy="221" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="872" cy="221" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<circle cx="887" cy="221" r="4" fill="#98afcd" stroke="none" stroke-width="2"/>
+<text x="870" y="265" font-size="25" fill="#18304d" font-weight="700" text-anchor="start">Chrome</text>
+<rect x="1056" y="241" width="65" height="30" rx="15" fill="#2455ed" stroke="none" stroke-width="2"/>
+<circle cx="1104" cy="256" r="11" fill="#fff" stroke="none" stroke-width="2"/>
+<path d="M 875 318 V 301 Q 875 292 884 292 H 939 L 957 312 H 941 Q 951 312 951 323 V 335 H 875 Z" stroke="#2455ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="#dce7ff"/>
+<path d="M 875 336 H 951" stroke="#2455ed" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M 1002 317 H 1060 M 1047 305 L 1060 317 L 1047 329" stroke="#2455ed" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<text x="992" y="397" font-size="23" fill="#18304d" font-weight="500" text-anchor="middle">フォルダーを選んで登録</text>
+<path d="M 396 269 L 408 280 L 396 291" stroke="#879dbc" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<path d="M 788 269 L 800 280 L 788 291" stroke="#879dbc" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<text x="600" y="478" font-size="25" fill="#526781" font-weight="500" text-anchor="middle">使っている間は、AutoReloadフォルダーを残しておきます。</text>
+</g>
+</svg>

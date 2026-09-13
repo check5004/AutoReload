@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="528" viewBox="0 0 1200 528" role="img" aria-labelledby="title desc">
+<title id="title">前日に覚えて、当日は日付を変える。</title>
+<desc id="desc">前日は公演ボタンと入力欄を記録する。当日は目的の日付を変更して保存し、入力補助を開始する。dateの指定は設定の日付を参照する。</desc>
+<g font-family="'Yu Gothic','Meiryo','Noto Sans CJK JP',sans-serif">
+<rect x="0" y="0" width="1200" height="528" rx="24" fill="#f4f7fc" stroke="none" stroke-width="2"/>
+<text x="36" y="57" font-size="34" fill="#18304d" font-weight="700" text-anchor="start">前日に覚えて、当日は日付を変える。</text>
+<text x="36" y="94" font-size="23" fill="#526781" font-weight="400" text-anchor="start">「どこを操作するか」と「何を入れるか」を分けて準備します。</text>
+<rect x="36" y="119" width="520" height="306" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="70" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="70" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">1</text>
+<text x="105" y="162" font-size="26" fill="#18304d" font-weight="700" text-anchor="start">前日：操作する場所を教える</text>
+<rect x="61" y="193" width="470" height="80" rx="10" fill="#edf2ff" stroke="#2455ed" stroke-width="2"/>
+<text x="85" y="230" font-size="26" fill="#18304d" font-weight="700" text-anchor="start">2026-10-14 / S席</text>
+<text x="85" y="259" font-size="21" fill="#526781" font-weight="400" text-anchor="start">受付開始前のボタンも記録できます</text>
+<path d="M 463 240 l 5 56 l 13 -17 l 16 24 l 12 -8 l -17 -23 l 23 -3 Z" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="#2455ed"/>
+<text x="66" y="320" font-size="23" fill="#526781" font-weight="400" text-anchor="start">記録画面</text>
+<rect x="178" y="286" width="320" height="50" rx="8" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<text x="199" y="320" font-size="27" fill="#2455ed" font-weight="600" text-anchor="start">{{date}}</text>
+<text x="296" y="360" font-size="21" fill="#526781" font-weight="400" text-anchor="middle">来場日の「入力・選択する値」</text>
+<text x="296" y="391" font-size="23" fill="#526781" font-weight="500" text-anchor="middle">「項目を覚える」→クリック→保存</text>
+<rect x="644" y="119" width="520" height="306" rx="16" fill="#fff" stroke="#ccdaed" stroke-width="2"/>
+<circle cx="678" cy="153" r="21" fill="#2455ed" stroke="none" stroke-width="2"/>
+<text x="678" y="161" font-size="24" fill="#fff" font-weight="700" text-anchor="middle">2</text>
+<text x="713" y="162" font-size="26" fill="#18304d" font-weight="700" text-anchor="start">当日：日付を変えて開始</text>
+<text x="675" y="219" font-size="23" fill="#526781" font-weight="400" text-anchor="start">設定画面：目的の公演日</text>
+<rect x="674" y="235" width="459" height="57" rx="9" fill="#edf2ff" stroke="#2455ed" stroke-width="2"/>
+<text x="696" y="274" font-size="31" fill="#2455ed" font-weight="700" text-anchor="start">2026-10-15</text>
+<text x="904" y="336" font-size="26" fill="#18304d" font-weight="700" text-anchor="middle">保存 → 入力補助を実行</text>
+<text x="904" y="391" font-size="23" fill="#526781" font-weight="500" text-anchor="middle">覚えた順番で、選択と入力へ</text>
+<path d="M 597 257 L 609 268 L 597 279" stroke="#879dbc" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<rect x="36" y="449" width="1128" height="57" rx="11" fill="#edf2ff" stroke="none" stroke-width="2"/>
+<text x="600" y="486" font-size="26" fill="#2455ed" font-weight="500" text-anchor="middle">{{date}} は、設定画面の「目的の公演日」を入れる指定です。</text>
+</g>
+</svg>
