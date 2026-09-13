@@ -1,8 +1,8 @@
-name: Tutorial Pages
+name: Download Guide Pages
 on:
   push:
     branches: [main]
-    paths: ['tutorial/**', '.github/workflows/pages.yml']
+    paths: ['docs/site/**', '.github/workflows/pages.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: tutorial
+          path: docs/site
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4

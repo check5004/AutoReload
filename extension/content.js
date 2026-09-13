@@ -3,6 +3,9 @@
   if(globalThis.__autoReloadLoaded){document.dispatchEvent(new Event('ar:refresh'));return;}
   globalThis.__autoReloadLoaded=true;
   const C=globalThis.AR,D=globalThis.ARDOM;
+  const practice=C.isPracticeURL(location.href,chrome.runtime.getURL(''));
+  let ownTabId;
+  if(practice)chrome.tabs.getCurrent().then(tab=>{ownTabId=tab?.id;}).catch(()=>{});
   let profile=C.defaults(),run=null,working=false,recording=null,dirty=false,lastPreview=null,errorText='',timer;
   const host=document.createElement('div');host.dataset.autoreloadRoot='';
   host.style.cssText='all:initial!important;position:fixed!important;bottom:18px!important;right:18px!important;z-index:2147483647!important;display:block!important;color-scheme:light!important;';
@@ -19,7 +22,7 @@
     $('status').textContent=msg;$('mini').textContent=recording?'記録中 · Escで取消':active?run.status==='scheduled'?'開始時刻を待機中':`監視・補助中 ${run.reloads}回`:run?.status==='recovered'?'復旧しました':run?.status==='complete'?'入力補助が完了':run?.status==='paused'?'確認してください':'AutoReload';
     host.style.setProperty(profile.position==='left'?'left':'right','18px','important');host.style.setProperty(profile.position==='left'?'right':'left','auto','important');
   }
-  async function refresh(){const data=await send('GET');profile=data.profile;run=data.run;if((run?.active||!profile.enabled)&&recording)cancelPick();host.style.setProperty('display',profile.enabled?'block':'none','important');info();if(profile.enabled)document.dispatchEvent(new Event('autoreload:present'));}
+  async function refresh(){const data=await send('GET');profile=data.profile;run=data.run;if((run?.active||!profile.enabled)&&recording)cancelPick();host.style.setProperty('display',profile.enabled?'block':'none','important');info();document.dispatchEvent(new Event(profile.enabled?'autoreload:present':'autoreload:disabled'));}
   async function patch(patch){const next=await send('PATCH_RUN',{id:run.id,patch});if(next)run=next;else run=null;info();return next;}
   async function pause(message){if(run?.active)await patch({active:false,status:'paused',message});info();}
   async function start(kind,scheduled=false){cancelPick();errorText='';$('error').textContent='';await refresh();let startAt=Date.now();if(scheduled){startAt=Date.parse(profile.scheduledAt);if(!Number.isFinite(startAt)||startAt<=Date.now())throw new Error('設定画面で未来の開始時刻を保存してください');}dirty=false;run=await send('START',{kind,startAt});info();}
@@ -57,11 +60,15 @@
   document.addEventListener('input',event=>{if(event.isTrusted&&!event.composedPath().includes(host)&&run?.active){dirty=true;pause('手動入力を検知したため停止しました').catch(error);}},true);
   document.addEventListener('ar:refresh',()=>refresh().catch(error));
   document.addEventListener('autoreload:probe',()=>{if(profile.enabled)document.dispatchEvent(new Event('autoreload:present'));});
-  chrome.runtime.onMessage.addListener((message,sender,respond)=>{
-    if(sender.id!==chrome.runtime.id)return;
+  function receive(message,respond){
     if(message.type==='WAKE'){refresh().then(()=>respond({ok:true})).catch(e=>respond({ok:false,error:e.message}));return true;}
     if(message.type==='PICK'){beginPick(message.kind).then(()=>respond({ok:true})).catch(e=>respond({ok:false,error:e.message}));return true;}
     if(message.type==='PREVIEW'){try{cancelPick();const step=message.step||profile.steps.find(s=>s.enabled);if(!step)throw new Error('操作を登録してください');const els=D.matches(step,profile.variables,{allowDisabled:true});lastPreview=els;draw(els[0]);setTimeout(()=>{if(!recording)draw(null);},5000);open();$('status').textContent=els.length===1?'1件見つかりました（青枠）。操作は実行していません。':els.length>1?`${els.length}件が一致します。対象の文字を絞ってください。`:'この画面に一致する項目はありません。';respond({ok:true,count:els.length});}catch(e){error(e);respond({ok:false,error:e.message});}}
+  }
+  chrome.runtime.onMessage.addListener((message,sender,respond)=>{
+    if(sender.id!==chrome.runtime.id||!['WAKE','PICK','PREVIEW'].includes(message.type))return;
+    if(practice&&ownTabId!==message.targetTabId)return;
+    return receive(message,respond);
   });
   function isReady(text){
     if(profile.readyText||profile.readyTarget){

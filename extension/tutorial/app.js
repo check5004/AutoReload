@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+$('practice-settings').addEventListener('click',async()=>{const result=await chrome.runtime.sendMessage({type:'OPEN_OPTIONS'});if(!result?.ok)$('context-hint').textContent=result?.error||'設定を開けませんでした';});
 const dateValue = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 let saved; try { saved = JSON.parse(sessionStorage.getItem('ar-lab') || 'null'); } catch {}
 let state = saved || { scenario:'learn', date:dateValue(new Date(Date.now()+86400000)), grade:'S席', logs:[], screen:'list', shuffle:true };
@@ -20,7 +21,7 @@ function start(options={}){
   log(`${names[scenario]}を開始しました。目的：${state.date} / ${state.grade}`);render();
 }
 $('start').addEventListener('click',()=>{try{start();}catch(e){$('context-hint').textContent=e.message;}});
-$('reset').addEventListener('click',()=>{sessionStorage.removeItem('ar-lab');location.reload();});
+$('reset').addEventListener('click',async()=>{await chrome.runtime.sendMessage({type:'STOP'});sessionStorage.removeItem('ar-lab');location.reload();});
 if(state.scenario==='busy'&&state.started){state.reloads=(state.reloads||0)+1;if(Date.now()>=state.recoverAt){state.scenario='sale';state.saleAt=Date.now();log(`${state.reloads}回目のページ読み込みで復旧しました。`);}else log(`混雑ページを読み込みました（${state.reloads}回目）。`);}
 function banner(){return `<div class="event-banner"><span class="event-kicker">AUTUMN SESSION / 2026</span><h3>夜明けの音楽祭</h3><p>東京・リバーサイドホール &nbsp; / &nbsp; 全席指定</p></div>`;}
 function render(){
@@ -65,7 +66,8 @@ function renderReview(){
 }
 setInterval(()=>{if($('countdown')){const seconds=Math.max(0,Math.ceil((state.saleAt-Date.now())/1000));$('countdown').textContent=`${seconds}秒`;if(!seconds){log('発売開始：目的の公演が表示されました。');render();}}if(state.started)$('run-clock').textContent=`開始から ${Math.floor((Date.now()-state.started)/1000)}秒`;},250);
 render();
-document.addEventListener('autoreload:present',()=>{$('extension-state').classList.add('connected');$('extension-state').textContent='拡張機能が有効です。画面端の ↻ パネルから操作できます。';});
+document.addEventListener('autoreload:disabled',()=>{$('extension-state').classList.remove('connected');$('extension-state').textContent='練習ページはOFFです。拡張機能のアイコンからONにできます。';});
+document.addEventListener('autoreload:present',()=>{$('extension-state').classList.add('connected');$('extension-state').textContent='練習用の操作パネルが有効です。画面端の ↻ から記録・実行できます。';});
 document.dispatchEvent(new Event('autoreload:probe'));
 const context=document.modelContext;
 if(context?.registerTool){try{Promise.resolve(context.registerTool({name:'start_ticket_rehearsal',title:'チケット練習を開始',description:'練習シナリオと公演条件を設定してシミュレーションを開始します。実際の申込はありません。',inputSchema:{type:'object',properties:{scenario:{type:'string',enum:['learn','sale','busy']},date:{type:'string',pattern:'^\\d{4}-\\d{2}-\\d{2}$'},grade:{type:'string',enum:['S席','A席']}},required:['scenario','date','grade'],additionalProperties:false},annotations:{readOnlyHint:false},execute:async input=>{if(!input||!names[input.scenario]||!['S席','A席'].includes(input.grade)||!/^\d{4}-\d{2}-\d{2}$/.test(input.date))throw new Error('練習条件が不正です');if(dateValue(new Date(input.date+'T12:00:00'))!==input.date)throw new Error('日付が不正です');selectScenario(input.scenario);$('event-date').value=input.date;$('event-grade').value=input.grade;start(input);return{scenario:state.scenario,date:state.date,grade:state.grade};}})).catch(()=>{});}catch{}}

@@ -1,11 +1,11 @@
 {
   "name": "autoreload-ticket-assist",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Chrome向けの復旧監視・チケット入力補助と静的練習サイト",
   "scripts": {
-    "dev": "node scripts/serve.mjs",
+    "test:browser": "node --test tests/browser.e2e.mjs",
     "check": "node scripts/check.mjs",
     "test": "node --test tests/*.test.mjs",
     "build": "node scripts/package.mjs"

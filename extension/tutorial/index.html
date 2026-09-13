@@ -2,18 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="AutoReloadの復旧監視と、日時・席種の選択、入力補助を試せるチケット販売の練習サイト。実際の購入は発生しません。">
-  <title>AutoReload Lab — チケット購入の練習</title>
+  <meta name="description" content="AutoReloadの復旧監視と、日時・席種の選択、入力補助を試せるチケット販売の練習ページ。実際の購入は発生しません。">
+  <title>AutoReload — チケット購入の練習</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./style.css">
+  <script src="../core.js" defer></script>
+  <script src="../dom.js" defer></script>
+  <script src="../content.js" defer></script>
   <script type="module" src="./app.js"></script>
 </head>
 <body>
-  <header class="topbar"><a class="brand" href="./"><span class="brand-mark">↻</span> AutoReload <span class="lab">LAB</span></a><span class="sandbox">練習環境 · 決済は発生しません</span><a href="./guide.html">使い方 ↗</a></header>
+  <header class="topbar"><a class="brand" href="./index.html"><span class="brand-mark">↻</span> AutoReload <span class="lab">練習</span></a><span class="sandbox">内蔵の練習ページ · 決済は発生しません</span><button id="practice-settings">練習用の設定を開く</button><a href="./guide.html">使い方 ↗</a></header>
   <main class="workspace">
     <aside class="controls">
       <div class="eyebrow">TICKET SIMULATOR</div><h1>本番の前に、<br>ひと通り。</h1><p class="intro">発売待ちから復旧、入力まで。<br>自分の設定でリハーサルできます。</p>
-      <div class="extension-state" id="extension-state">拡張機能を入れたChromeで、このドメインをONにしてください。</div>
+      <div class="extension-state" id="extension-state">練習用の操作パネルを準備しています。</div>
       <section><h2><span class="step-number">01</span> 練習シナリオ</h2>
         <div class="scenario-list" role="group" aria-label="練習シナリオ">
           <button class="scenario active" data-scenario="learn"><strong>前日の準備</strong><span>項目をクリックして覚えさせる</span></button>
@@ -29,7 +32,7 @@
         <button id="start" class="primary wide">この条件で練習する <span>↗</span></button>
         <button id="reset" class="text-button">練習をリセット</button>
       </section>
-      <p class="local-note">入力内容と練習記録はこのタブ内に保存されます。</p>
+      <p class="local-note">練習画面の進行状況は、このタブ内に保存されます。</p>
     </aside>
     <div class="stage-column">
       <div class="stage-heading"><div><span class="eyebrow">LIVE PREVIEW</span><h2>チケット販売の練習画面</h2></div><span class="status-pill" id="scenario-label">前日の準備</span></div>
@@ -38,5 +41,5 @@
       <div class="hint"><span class="hint-icon">i</span><p id="context-hint">拡張機能の「項目を覚える」で選択ボタンや入力欄を指定します。日時と席種は、設定画面で変数に置き換えられます。</p></div>
     </div>
   </main>
-  <footer>AutoReload Lab <span>このサイトはチュートリアルです。実在の公演・販売サービスとは関係ありません。</span></footer>
+  <footer>AutoReload 練習 <span>このページはチュートリアルです。実在の公演・販売サービスとは関係ありません。</span></footer>
 </body></html>

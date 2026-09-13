@@ -8,7 +8,7 @@ if(manifest.manifest_version!==3||!manifest.key)throw new Error('Manifest V3 and
 for(const file of [manifest.background.service_worker,manifest.action.default_popup,manifest.options_page,...Object.values(manifest.icons)])await access(path.join('extension',file));
 async function walk(dir){const files=[];for(const entry of await readdir(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);files.push(...entry.isDirectory()?await walk(file):[file]);}return files;}
 let count=0;
-for(const file of [...await walk('extension'),...await walk('tutorial'),...await walk('scripts'),...await walk('tests')]){
+for(const file of [...await walk('extension'),...await walk('docs/site'),...await walk('scripts'),...await walk('tests')]){
   if(/\.(m?js)$/.test(file)){execFileSync(process.execPath,['--check',file],{stdio:'pipe'});count++;}
   if(file.endsWith('.html')){const html=await readFile(file,'utf8');for(const match of html.matchAll(/(?:src|href)="([^"#]+)"/g)){const value=match[1];if(/^(?:[a-z]+:|#|\/)/i.test(value))continue;const resolved=path.resolve(path.dirname(file),value.split(/[?#]/)[0]);await access(resolved).catch(()=>{throw new Error(`${file}: missing asset ${value}`);});}if(/<script\b[^>]*>\s*[^<\s]/i.test(html))throw new Error(`${file}: inline script is not allowed`);}
 }

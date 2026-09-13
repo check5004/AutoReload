@@ -1,26 +1,32 @@
 import './core.js';
 const C=globalThis.AR;
+const extensionRoot=chrome.runtime.getURL('');
+const tabScope=url=>C.tabScope(url,extensionRoot);
 const PK=o=>'profile:'+o, RK=t=>'run:'+t;
 const locks=new Map();
 const serial=(key,fn)=>{const prior=locks.get(key)||Promise.resolve();const next=prior.catch(()=>{}).then(fn);locks.set(key,next);next.finally(()=>{if(locks.get(key)===next)locks.delete(key);}).catch(()=>{});return next;};
 const get=async(area,key)=>(await chrome.storage[area].get(key))[key];
-const getProfile=async o=>C.profile(await get('local',PK(o)));
+const getProfile=async o=>C.profile(await get('local',PK(o))??{enabled:o===C.PRACTICE});
 const getRun=async t=>(await get('session',RK(t)))||null;
 const scriptId=o=>'ar-'+Array.from(new TextEncoder().encode(o)).map(b=>b.toString(16).padStart(2,'0')).join('');
 async function register(o,enabled){
+  if(o===C.PRACTICE)return;
   const id=scriptId(o);await chrome.scripting.unregisterContentScripts({ids:[id]}).catch(()=>{});
   if(enabled&&await chrome.permissions.contains({origins:[C.pattern(o)]}))await chrome.scripting.registerContentScripts([{id,matches:[C.pattern(o)],js:['core.js','dom.js','content.js'],runAt:'document_idle',persistAcrossSessions:true}]);
 }
 async function badge(tabId,run){await chrome.action.setBadgeText({tabId,text:run?.active?'ON':run?.status==='recovered'?'✓':''}).catch(()=>{});await chrome.action.setBadgeBackgroundColor({tabId,color:run?.active?'#2258e8':'#18765f'}).catch(()=>{});}
 async function putRun(tabId,run){await chrome.storage.session.set({[RK(tabId)]:run});await badge(tabId,run);return run;}
-async function wake(tabId){await chrome.tabs.sendMessage(tabId,{type:'WAKE'}).catch(()=>{});}
-async function inject(tabId){await chrome.scripting.executeScript({target:{tabId},files:['core.js','dom.js','content.js']});}
+async function sendToTab(tabId,message){const tab=await chrome.tabs.get(tabId);return await C.resolveTabScope(tab,chrome.runtime)===C.PRACTICE?chrome.runtime.sendMessage({...message,targetTabId:tabId}):chrome.tabs.sendMessage(tabId,message);}
+async function wake(tabId){await sendToTab(tabId,{type:'WAKE'}).catch(()=>{});}
+async function inject(tabId){const tab=await chrome.tabs.get(tabId);if(await C.resolveTabScope(tab,chrome.runtime)===C.PRACTICE)return;await chrome.scripting.executeScript({target:{tabId},files:['core.js','dom.js','content.js']});}
+async function scopeTabs(origin){return origin===C.PRACTICE?C.practiceTabs(chrome.runtime,chrome.tabs):(await chrome.tabs.query({url:C.pattern(origin)})).filter(tab=>tabScope(tab.url)===origin);}
 function trustedUI(sender){return typeof sender.url==='string'&&sender.url.startsWith(chrome.runtime.getURL(''));}
 async function context(message,sender){
+  if(C.isPracticeURL(sender.url,extensionRoot)){if(sender.frameId!==0||sender.tab?.id==null)throw new Error('練習ページをタブで開いてください');return {tabId:sender.tab.id,origin:C.PRACTICE,ui:false};}
   if(sender.tab&&!trustedUI(sender)){if(sender.frameId!==0)throw new Error('メイン画面で操作してください');const origin=C.origin(sender.url);if(!origin)throw new Error('対象外のページです');return {tabId:sender.tab.id,origin,ui:false};}
   if(!trustedUI(sender))throw new Error('この操作は拡張機能の画面から実行してください');
-  if(message.tabId!=null){const tab=await chrome.tabs.get(message.tabId);const origin=C.origin(tab.url);if(!origin)throw new Error('通常のWebページを開いてください');return {tabId:tab.id,origin,ui:true};}
-  const origin=C.origin(message.origin);return {origin,ui:true};
+  if(message.tabId!=null){const tab=await chrome.tabs.get(message.tabId);const origin=await C.resolveTabScope(tab,chrome.runtime);if(!origin)throw new Error('対象のWebページか内蔵の練習ページを開いてください');return {tabId:tab.id,origin,ui:true};}
+  const origin=C.profileScope(message.origin);return {origin,ui:true};
 }
 async function handle(m,sender){
   if(!m||typeof m.type!=='string')throw new Error('操作が不正です');
@@ -32,7 +38,12 @@ async function handle(m,sender){
     if(m.type==='UPDATE_INFO')return updateInfo();
     if(m.type==='UPDATE_CONFIG'){const repo=C.repository(m.repository);if(!repo)throw new Error('owner/repository の形式で指定してください');await chrome.storage.local.set({updateConfig:{repository:repo,enabled:m.enabled!==false},updateState:{}});return updateInfo();}
     if(m.type==='UPDATE_DISMISS'){const s=await get('local','updateState')||{};await chrome.storage.local.set({updateState:{...s,dismissedUntil:Date.now()+7*86400000}});return updateInfo();}
-    if(m.type==='OPEN_TUTORIAL'){const release=await releaseConfig();await chrome.tabs.create({url:release.tutorialUrl||'https://check5004.github.io/AutoReload/'});return true;}
+    if(m.type==='OPEN_TUTORIAL'){
+      if(!await get('local',PK(C.PRACTICE)))await chrome.storage.local.set({[PK(C.PRACTICE)]:C.profile({enabled:true})});
+      const existing=(await scopeTabs(C.PRACTICE))[0];
+      if(existing){await chrome.tabs.update(existing.id,{active:true});if(existing.windowId!=null)await chrome.windows.update(existing.windowId,{focused:true});return {tabId:existing.id};}
+      const tab=await chrome.tabs.create({url:chrome.runtime.getURL('tutorial/index.html')});return {tabId:tab.id};
+    }
   }
   if(!origin)throw new Error('対象ドメインを選んでください');
   if(m.type==='GET'){const p=await getProfile(origin);return {origin,profile:p,run:tabId!=null?await getRun(tabId):null};}
@@ -43,9 +54,9 @@ async function handle(m,sender){
   if(m.type==='ENABLE'){
     if(!ui)throw new Error('ポップアップから切り替えてください');
     return serial(PK(origin),async()=>{
-      const p=await getProfile(origin);if(m.enabled&&!await chrome.permissions.contains({origins:[C.pattern(origin)]}))throw new Error('このサイトへのアクセス許可が必要です');
+      const p=await getProfile(origin);if(m.enabled&&origin!==C.PRACTICE&&!await chrome.permissions.contains({origins:[C.pattern(origin)]}))throw new Error('このサイトへのアクセス許可が必要です');
       p.enabled=m.enabled===true;await chrome.storage.local.set({[PK(origin)]:p});await register(origin,p.enabled);
-      const tabs=await chrome.tabs.query({url:C.pattern(origin)});for(const tab of tabs){if(C.origin(tab.url)!==origin)continue;if(!p.enabled)await serial(RK(tab.id),async()=>{await chrome.alarms.clear(RK(tab.id));await putRun(tab.id,null);});else await inject(tab.id).catch(()=>{});await wake(tab.id);}
+      const tabs=await scopeTabs(origin);for(const tab of tabs){if(!p.enabled)await serial(RK(tab.id),async()=>{await chrome.alarms.clear(RK(tab.id));await putRun(tab.id,null);});else await inject(tab.id).catch(()=>{});await wake(tab.id);}
       return p;
     });
   }
@@ -55,7 +66,7 @@ async function handle(m,sender){
   }
   if(m.type==='OPEN_OPTIONS'){await chrome.tabs.create({url:chrome.runtime.getURL('options.html')+'?origin='+encodeURIComponent(origin)+(tabId!=null?'&tab='+tabId:'')});return true;}
   if(tabId==null)throw new Error('操作するタブがありません');
-  if(m.type==='PICK'||m.type==='PREVIEW'){if(!ui)throw new Error('拡張機能から操作してください');await inject(tabId);return chrome.tabs.sendMessage(tabId,{type:m.type,kind:m.kind||'step',step:m.step||null});}
+  if(m.type==='PICK'||m.type==='PREVIEW'){if(!ui)throw new Error('拡張機能から操作してください');await inject(tabId);return sendToTab(tabId,{type:m.type,kind:m.kind||'step',step:m.step||null});}
   if(m.type==='START'){
     const p=await getProfile(origin);if(!p.enabled)throw new Error('このドメインをONにしてください');
     const kind=m.kind==='recipe'?'recipe':'recovery';if(kind==='recipe'&&!p.steps.some(s=>s.enabled))throw new Error('先に操作を覚えさせてください');
@@ -89,7 +100,7 @@ async function handle(m,sender){
 }
 chrome.runtime.onMessage.addListener((message,sender,respond)=>{handle(message,sender).then(data=>respond({ok:true,data})).catch(error=>respond({ok:false,error:error.message}));return true;});
 chrome.tabs.onRemoved.addListener(tabId=>{chrome.storage.session.remove(RK(tabId));chrome.alarms.clear(RK(tabId));});
-chrome.tabs.onUpdated.addListener((tabId,change,tab)=>{if(change.url)serial(RK(tabId),async()=>{const r=await getRun(tabId);if(r?.active&&C.origin(change.url)!==r.origin){await putRun(tabId,{...r,active:false,status:'paused',message:'別ドメインへ移動したため停止しました'});await chrome.alarms.clear(RK(tabId));}}).catch(()=>{});});
+chrome.tabs.onUpdated.addListener((tabId,change,tab)=>{if(change.url||change.status==='complete')serial(RK(tabId),async()=>{const r=await getRun(tabId);if(!r?.active)return;const scope=change.url?tabScope(change.url):await C.resolveTabScope(await chrome.tabs.get(tabId),chrome.runtime);if(scope!==r.origin){await putRun(tabId,{...r,active:false,status:'paused',message:'対象ページの範囲外へ移動したため停止しました'});await chrome.alarms.clear(RK(tabId));}}).catch(()=>{});});
 chrome.permissions.onRemoved.addListener(()=>restore().catch(()=>{}));
 chrome.alarms.onAlarm.addListener(alarm=>{if(alarm.name==='updates')checkUpdates().catch(()=>{});else if(alarm.name.startsWith('run:'))wake(Number(alarm.name.slice(4)));});
 async function restore(){

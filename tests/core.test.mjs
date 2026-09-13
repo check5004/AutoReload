@@ -2,6 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import '../extension/core.js';
 const C=globalThis.AR;
+test('practice scope accepts only the exact page in this extension',()=>{
+  const root='chrome-extension://self/';
+  assert.equal(C.tabScope(root+'tutorial/index.html?scenario=busy',root),C.PRACTICE);
+  for(const url of ['chrome-extension://other/tutorial/index.html',root+'options.html',root+'tutorial/guide.html','chrome://extensions'])assert.equal(C.tabScope(url,root),null);
+  assert.equal(C.tabScope('https://tickets.example/tutorial/index.html',root),'https://tickets.example');
+  assert.equal(C.profileScope(C.PRACTICE),C.PRACTICE);assert.equal(C.scopeLabel(C.PRACTICE),'内蔵の練習ページ');
+});
 test('origin permissions are exact host and reject protected schemes',()=>{assert.equal(C.origin('https://tickets.example.com/x'),'https://tickets.example.com');assert.equal(C.origin('chrome://extensions'),null);assert.equal(C.origin('file:///tmp/a.html'),null);assert.equal(C.pattern('http://localhost:4317/test'),'http://localhost/*');assert.throws(()=>C.pattern('javascript:alert(1)'));});
 test('variables replace dates with calendar arithmetic, including leap days',()=>{assert.equal(C.template('{{date+1}} / {{date-1}} / {{grade}}',{date:'2028-02-28',grade:'S席'}),'2028-02-29 / 2028-02-27 / S席');assert.equal(C.template('{{today+1}}',{},new Date(2026,11,31,23,59)),'2027-01-01');assert.throws(()=>C.template('{{date}}',{date:'2026-02-30'}));assert.throws(()=>C.template('{{email}}',{email:''}));assert.throws(()=>C.template('{{secret}}',{}));});
 test('Japanese, fullwidth and ISO dates normalize to the same item',()=>{assert.equal(C.includesAll('２０２６年９月１４日  S席 開場17:30','2026-09-14 | S席'),true);assert.equal(C.includesAll('2026-09-15 S席','2026-09-14 | S席'),false);assert.equal(C.includesAll('2026-09-14 A席','2026-09-14 | S席'),false);assert.equal(C.includesAll('abc',''),false);});
