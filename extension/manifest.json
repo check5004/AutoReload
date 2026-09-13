@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "AutoReload — チケット購入サポート",
   "short_name": "AutoReload",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ドメインごとの復旧監視と、クリックで記録する日時・席種の選択、入力補助。購入確定は手動です。",
   "minimum_chrome_version": "120",
   "permissions": [

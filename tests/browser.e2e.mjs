@@ -15,7 +15,9 @@ test('unpacked MV3 extension and ticket rehearsal end-to-end',{timeout:150000},a
   const manifest=JSON.parse(await readFile(path.join(extension,'manifest.json'),'utf8'));
   // Only the test copy pre-grants localhost. Production still prompts per domain.
   manifest.host_permissions.push('http://127.0.0.1/*');await writeFile(path.join(extension,'manifest.json'),JSON.stringify(manifest));
+  let retryRequests=0;
   const server=http.createServer((req,res)=>{
+    if(req.url==='/one-retry'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'}).end(retryRequests++===0?'<p>アクセスが集中しています</p>':'<h2>販売再開</h2><button>選択する</button>');return;}
     if(req.url==='/flow/first'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'}).end('<a id="next" href="/flow/second">申込情報へ進む</a>');return;}
     if(req.url==='/flow/second'){res.writeHead(200,{'Content-Type':'text/html; charset=utf-8'}).end('<label for="fresh-name">お名前</label><input id="fresh-name" name="name"><button data-ar-final>購入を確定する</button>');return;}
     return serveRequest(req,res);
@@ -87,6 +89,9 @@ test('unpacked MV3 extension and ticket rehearsal end-to-end',{timeout:150000},a
     await t.test('CSS-hidden congestion and verification text do not trigger monitoring',async()=>{
       await page.goto(origin+'/flow/second');await page.evaluate(()=>{const hidden=document.createElement('div');hidden.style.display='none';hidden.innerHTML='<span>アクセスが集中しています。Verify you are human</span>';document.body.append(hidden);});
       await send('SAVE',{profile:{...C.defaults(),readyText:'never-visible'}});await send('START',{tabId,kind:'recovery'});await waitRun(r=>r?.activatedAt);await new Promise(r=>setTimeout(r,700));const result=(await send('GET',{tabId})).run;assert.equal(result.active,true);assert.equal(result.reloads,0);await send('STOP',{tabId});
+    });
+    await t.test('last permitted reload still detects recovery with an unfinished recipe',async()=>{
+      await page.goto(origin+'/one-retry');const p=C.defaults();p.interval=2000;p.maxInterval=2000;p.maxReloads=1;p.steps=[{action:'click',target:{tag:'button',path:'/one-retry'},matchText:'{{date}}'}];await send('SAVE',{profile:p});await send('START',{tabId,kind:'recovery'});const result=await waitRun(r=>r&&!r.active);assert.equal(result.status,'recovered',result.message);assert.equal(result.reloads,1);
     });
     await t.test('scheduled flow waits, reloads once, and fills at activation',async()=>{
       await page.goto(origin+'/flow/second');const p=C.defaults();p.variables.name='予約 テスト';p.steps=[{id:'name',action:'fill',target:{tag:'input',name:'name',label:'お名前',path:'/flow/second'},value:'{{name}}',enabled:true}];await send('SAVE',{profile:p});

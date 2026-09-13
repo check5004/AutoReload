@@ -70,7 +70,7 @@
       try{const els=document.querySelectorAll(target.selector);if(els.length===1&&D.visible(els[0])&&(!target.text||C.normalized(D.text(els[0]))===C.normalized(target.text)))return true;}catch{}
       return !!target.text&&target.text.length>=4&&C.includesAll(text,target.text);
     }
-    const step=profile.steps[run?.index||0];if(step&&D.matches(step,profile.variables).length===1)return true;
+    const step=profile.steps[run?.index||0];try{if(step&&D.matches(step,profile.variables).length===1)return true;}catch{/* Recovery monitoring also works with an unfinished recipe. */}
     return Array.from(document.querySelectorAll(D.CLICKS)).some(el=>D.available(el)&&/選択する|申込む|申し込む|購入へ|購入する|予約する|内容を確認する/.test(D.text(el))&&!D.finalAction(el));
   }
   async function tick(){
@@ -79,13 +79,14 @@
       await refresh();if(!profile.enabled||!run?.active||recording)return;
       if(Date.now()<run.startAt)return;
       if(!run.activatedAt){const now=Date.now();if(!await patch({activatedAt:now,status:run.kind==='recipe'?'running':'watching',message:'画面を確認しています'}))return;}
-      if(C.expired(run,profile)){await pause('監視の回数・時間の上限に達しました');return;}
+      if(C.expired({...run,reloads:0},profile)){await pause('監視時間の上限に達しました');return;}
       if(dirty){await pause('手動入力を検知したため停止しました');return;}
       if(run.kind==='recipe'&&run.startAt>run.createdAt+1000&&profile.reloadAtStart&&!run.startReloaded){if(await patch({startReloaded:true,message:'開始時刻になりました。再読み込みしています'}))location.reload();return;}
       const text=D.pageText();let state=C.classify(text,profile);
       if(state==='unknown'&&run.kind==='recovery'&&isReady(text))state='ready';
       if(state==='hold'){await pause('順番待ち・認証画面を検知しました。画面の案内に従ってください');return;}
       if(state==='busy'){
+        if(run.reloads>=profile.maxReloads){await pause('リロード回数の上限に達しました');return;}
         if(run.status!=='watching')await patch({status:'watching',message:'混雑ページを監視しています',stepStartedAt:0});
         if(!run?.nextReloadAt){await patch({nextReloadAt:Date.now()+profile.interval});return;}
         if(Date.now()>=run.nextReloadAt){const reply=await send('RELOAD',{id:run.id});if(reply?.allowed){run=reply.run;location.reload();}else if(reply?.run)run=reply.run;}
