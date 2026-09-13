@@ -84,6 +84,10 @@ test('unpacked MV3 extension and ticket rehearsal end-to-end',{timeout:150000},a
     await t.test('manual input pauses monitoring',async()=>{
       await send('SAVE',{profile:{...C.defaults(),readyText:'never-visible'}});await send('START',{tabId,kind:'recovery'});await waitRun(r=>r?.activatedAt);await page.locator('[name=name]').fill('手入力');const result=await waitRun(r=>r&&!r.active);assert.equal(result.status,'paused');assert.match(result.message,/手動入力/);
     });
+    await t.test('CSS-hidden congestion and verification text do not trigger monitoring',async()=>{
+      await page.goto(origin+'/flow/second');await page.evaluate(()=>{const hidden=document.createElement('div');hidden.style.display='none';hidden.innerHTML='<span>アクセスが集中しています。Verify you are human</span>';document.body.append(hidden);});
+      await send('SAVE',{profile:{...C.defaults(),readyText:'never-visible'}});await send('START',{tabId,kind:'recovery'});await waitRun(r=>r?.activatedAt);await new Promise(r=>setTimeout(r,700));const result=(await send('GET',{tabId})).run;assert.equal(result.active,true);assert.equal(result.reloads,0);await send('STOP',{tabId});
+    });
     await t.test('scheduled flow waits, reloads once, and fills at activation',async()=>{
       await page.goto(origin+'/flow/second');const p=C.defaults();p.variables.name='予約 テスト';p.steps=[{id:'name',action:'fill',target:{tag:'input',name:'name',label:'お名前',path:'/flow/second'},value:'{{name}}',enabled:true}];await send('SAVE',{profile:p});
       await send('START',{tabId,kind:'recipe',startAt:Date.now()+2500});assert.equal(await page.locator('[name=name]').inputValue(),'');const result=await waitRun(r=>r&&!r.active);assert.equal(result.status,'complete');assert.equal(result.startReloaded,true);assert.equal(await page.locator('[name=name]').inputValue(),'予約 テスト');

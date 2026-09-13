@@ -2,6 +2,8 @@
 
 Chrome用の、混雑ページからの復旧監視とチケット購入の入力補助です。身内向けに GitHub Releases のZIPから手動インストールする構成で、ストア公開は不要です。
 
+[ダウンロード](https://github.com/check5004/AutoReload/releases/latest) · [練習サイト](https://check5004.github.io/AutoReload/) · [導入・更新手順](docs/INSTALL.md) · [検証記録](docs/VALIDATION.md)
+
 ## 使える機能
 
 - 拡張アイコンからドメインごとにON/OFF。ページ端の小さなパネルで手動開始・停止。

@@ -4,7 +4,7 @@
   const FIELDS='input:not([type=hidden]),textarea,select,[contenteditable=true]';
   const CLICKS='button,a[href],[role=button],input[type=button],input[type=submit],[role=option],[role=radio]';
   const own = el => !!el?.closest?.('[data-autoreload-root]');
-  function visible(el){if(!el?.isConnected||own(el)||el.closest('[hidden],[inert],[aria-hidden=true]'))return false;const s=getComputedStyle(el);return s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity)!==0&&el.getClientRects().length>0;}
+  function visible(el){if(!el?.isConnected||own(el)||el.closest('[hidden],[inert],[aria-hidden=true]'))return false;if(el.checkVisibility&&!el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true}))return false;const s=getComputedStyle(el);return s.display!=='none'&&s.visibility!=='hidden'&&Number(s.opacity)!==0&&el.getClientRects().length>0;}
   function available(el){return visible(el)&&!el.disabled&&el.getAttribute('aria-disabled')!=='true'&&!el.readOnly;}
   function label(el){const ids=(el.getAttribute('aria-labelledby')||'').split(/\s+/);return (el.getAttribute('aria-label')||ids.map(id=>document.getElementById(id)?.textContent||'').join(' ').trim()||Array.from(el.labels||[]).map(x=>x.textContent).join(' ').trim()||el.getAttribute('placeholder')||'').trim().slice(0,500);}
   function text(el){return (el.innerText||el.textContent||el.value||el.getAttribute('title')||'').trim().slice(0,500);}
@@ -68,6 +68,6 @@
     setValue(el,actual);
     if(!el.isContentEditable&&el.value!==actual)throw new Error('値が反映されませんでした。形式やサイト側の制約を確認してください');
   }
-  function pageText(){const clone=document.body?.cloneNode(true);if(!clone)return '';clone.querySelectorAll('[data-autoreload-root],script,style,noscript,template,[hidden],[aria-hidden=true]').forEach(el=>el.remove());return (clone.textContent||'').slice(0,150000);}
+  function pageText(){if(!document.body)return '';const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let node,result='';while((node=walker.nextNode())&&result.length<150000){const parent=node.parentElement;if(!parent||parent.closest('script,style,noscript,template,[data-autoreload-root]')||!node.nodeValue.trim()||!visible(parent))continue;result+=node.nodeValue+' ';}return result.slice(0,150000);}
   globalThis.ARDOM=Object.freeze({FIELDS,CLICKS,visible,available,label,text,context,describe,sensitive,finalAction,matches,apply,pageText});
 })();
